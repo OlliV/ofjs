@@ -2,13 +2,14 @@
   "name": "ofjs",
   "version": "0.1.0",
   "description": "OpenFlow Controller written in node.js",
+  "author": "Olli Vanhoja <olli.vanhoja@cs.helsinki.fi>",
   "main": "./build/index",
   "files": [
     "build"
   ],
   "scripts": {
     "build": "babel lib --out-dir build/",
-    "start": "node build/index.js"
+    "start": "node --stack-size=524288 build/index.js"
   },
   "babel": {
     "plugins": [
@@ -26,5 +27,20 @@
     "eslint-plugin-standard": "1.3.2",
     "eslint-plugin-promise": "1.1.0"
   },
-  "author": "Olli Vanhoja <olli.vanhoja@cs.helsinki.fi>"
+  "eslintConfig": {
+    "extends": "standard",
+    "parser": "babel-eslint",
+    "rules": {
+      "yoda": 0,
+      "semi": [
+        2,
+        "always"
+      ],
+      "no-unused-vars": 2,
+      "no-extra-semi": 2
+    }
+  },
+  "dependencies": {
+    "segfault-handler": "^1.0.0"
+  }
 }
