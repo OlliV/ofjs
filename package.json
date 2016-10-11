@@ -43,7 +43,8 @@
     }
   },
   "dependencies": {
+    "mac-address": "0.3.0",
     "promise-redis": "0.0.5",
-    "segfault-handler": "^1.0.0"
+    "segfault-handler": "1.0.0"
   }
 }
