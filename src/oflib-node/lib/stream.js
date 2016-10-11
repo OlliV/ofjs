@@ -2,9 +2,9 @@
  * Author: Zoltán Lajos Kis <zoltan.lajos.kis@ericsson.com>
  */
 
-const util = require('util');
-const ofp = require('./ofp.js');
-const oflib = require('./oflib.js');
+import util from 'util';
+import ofp from './ofp.js';
+import oflib from './oflib.js';
 
 const Stream = function Stream() {
   this.length = 1024;

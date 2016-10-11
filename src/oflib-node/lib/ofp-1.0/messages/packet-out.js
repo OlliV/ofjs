@@ -8,17 +8,16 @@
   const util = require('util');
   const ofp = require('../ofp.js');
   const ofputil = require('../../util.js');
+  const action = require('../action.js');
 
-  var action = require('../action.js');
-
-  var offsetsHeader = ofp.offsets.ofp_header;
-  var offsets = ofp.offsets.ofp_packet_out;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsets = ofp.offsets.ofp_packet_out;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
+    unpack: function(buffer, offset) {
       var message = {
-        "header" : {"type" : 'OFPT_PACKET_OUT'},
-        "body" : {}
+        header: {"type" : 'OFPT_PACKET_OUT'},
+        body: {}
       };
       var warnings = [];
 
@@ -38,8 +37,8 @@
         } else {
           message.body.in_port = in_port;
           warnings.push({
-            "desc" : util.format('%s message at offset %d has invalid in_port (%d).', message.header.type, offset, in_port),
-            "type" : 'OFPBAC_BAD_ACTION', "code" : 'OFPBAC_BAD_ARGUMENT'
+            desc: util.format('%s message at offset %d has invalid in_port (%d).', message.header.type, offset, in_port),
+            type: 'OFPBAC_BAD_ACTION', "code" : 'OFPBAC_BAD_ARGUMENT'
           });
         }
       } else {
@@ -72,8 +71,8 @@
       if (dataLen > 0) {
         if ('buffer_id' in message.body) {
           warnings.push({
-            "desc" : util.format('%s message at offset %d has both buffer_id and data.', message.header.type, offset),
-            "type" : 'OFPET_BAD_REQUEST', "code" : 'OFPBRC_BUFFER_UNKNOWN'
+            desc: util.format('%s message at offset %d has both buffer_id and data.', message.header.type, offset),
+            type: 'OFPET_BAD_REQUEST', "code" : 'OFPBRC_BUFFER_UNKNOWN'
           });
         } else {
           message.body.data = new Buffer(dataLen);
@@ -83,19 +82,19 @@
 
       if (warnings.length == 0) {
         return {
-          "message" : message,
-          "offset" : offset + len
+          message: message,
+          offset: offset + len
         }
       } else {
         return {
-          "message" : message,
-          "warnings" : warnings,
-          "offset" : offset + len
+          message: message,
+          warnings: warnings,
+          offset: offset + len
         }
       }
     },
 
-    "pack" : function(message, buffer, offset) {
+    pack: function(message, buffer, offset) {
       //TODO: Clear Buffer check?
       buffer.fill(0, 0 , buffer.length);
 

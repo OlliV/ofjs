@@ -2,7 +2,7 @@
  * Author: Zoltán Lajos Kis <zoltan.lajos.kis@ericsson.com>
  */
 
-const util = require('util');
+import util from 'util';
 
 module.exports = {
   "parseFlags" : function parseFlags(flags, map) {
