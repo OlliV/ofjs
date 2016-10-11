@@ -1,5 +1,5 @@
 import * as nfutils from './nf-utils.js';
-import mac from require('mac-address');
+import mac from 'mac-address';
 
 const debug = process.env.DEBUG;
 
