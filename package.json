@@ -8,7 +8,8 @@
     "build"
   ],
   "scripts": {
-    "build": "babel lib --out-dir build/",
+    "build": "babel src --out-dir build/",
+    "lint": "./node_modules/eslint/bin/eslint.js ---ext .js src",
     "start": "node --stack-size=524288 build/index.js"
   },
   "babel": {
@@ -33,6 +34,7 @@
     "extends": "standard",
     "parser": "babel-eslint",
     "rules": {
+      "comma-dangle": "always-multiline",
       "yoda": 0,
       "semi": [
         2,
