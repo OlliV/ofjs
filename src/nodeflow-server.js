@@ -47,10 +47,10 @@ export default class NodeFlowServer extends EventEmitter {
 
       sock.on('data', (data) => {
         try {
-        const msgs = switchStream.process(data);
-        msgs.forEach(function (msg) {
-          self._processMessage(msg, sessionID);
-        });
+          const msgs = switchStream.process(data);
+          msgs.forEach(function (msg) {
+            self._processMessage(msg, sessionID);
+          });
         } catch (err) {
           console.error(err);
         }
