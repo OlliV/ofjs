@@ -25,14 +25,8 @@
 
       action.body.vlan_vid = buffer.readUInt16BE(offset + offsets.vlan_vid, true);
       if (action.body.vlan_pcp > packet.VLAN_VID_MAX) {
-        return {
-          action: action,
-          warnings: [{
-            desc: util.format('%s action at offset %d has invalid vid (%d).', action.header.type, offset, action.body.vlan_vid),
-            type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_OUT_ARGUMENT'
-          }],
-          offset: offset + len
-        };
+        console.warn('%s action at offset %d has invalid vid (%d).',
+                     action.header.type, offset, action.body.vlan_vid);
       }
 
       return {

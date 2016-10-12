@@ -10,17 +10,16 @@
   const ofputil = require('../../../util.js');
   const match = require('../../structs/match.js');
 
-  var offsetsHeader = ofp.offsets.ofp_header;
-  var offsetsStats = ofp.offsets.ofp_stats_request;
-  var offsets = ofp.offsets.ofp_aggregate_stats_request;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsetsStats = ofp.offsets.ofp_stats_request;
+  const offsets = ofp.offsets.ofp_aggregate_stats_request;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
-      var stats = {
-        "header" : {"type" : 'OFPST_AGGREGATE'},
-        "body" : {}
+    unpack: function(buffer, offset) {
+      let stats = {
+        header: {type: 'OFPST_AGGREGATE'},
+        body : {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -31,9 +30,6 @@
       }
 
       var unpack = match.unpack(buffer, offset + ofp.sizes.ofp_stats_request + offsets.match);
-      if ('warnings' in unpack) {
-        warnings.concat(unpack.warnings);
-      }
       stats.body.match = unpack.match;
 
       stats.body.table_id = buffer.readUInt8(offset + ofp.sizes.ofp_stats_request + offsets.table_id, true);
@@ -48,29 +44,17 @@
       if (out_port > ofp.ofp_port.OFPP_MAX) {
         if (out_port != ofp.ofp_port.OFPP_ALL) {
           stats.body.out_port = out_port;
-          warnings.push({
-            "desc" : util.format('%s stats message at offset %d has invalid out_port (%d).', stats.header.type, offset, out_port),
-            "type" : 'OFPET_BAD_REQUEST', "code" : 'OFPBRC_BAD_STAT'
-          });
+          console.warn('%s stats message at offset %d has invalid out_port (%d).',
+                       stats.header.type, offset, out_port);
         }
       } else {
         stats.body.out_port = out_port;
       }
 
-      if (warnings.length = 0) {
-        return {
-          "stats" : stats,
-          "offset" : offset + len
-        }
-      } else {
-        return {
-          "stats" : stats,
-          "warnings" : warnings,
-          "offset" : offset + len
-        }
+      return {
+        stats: stats,
+        offset: offset + len
       }
     }
-
   }
-
 })();

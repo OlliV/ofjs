@@ -15,7 +15,6 @@
         header: {type: 'OFPST_PORT'},
         body: {}
       };
-      let warnings = [];
 
       let len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -30,9 +29,6 @@
       while (pos < offset + len) {
         let unpack = portStats.unpack(buffer, pos);
 
-        if ('warnings' in unpack) {
-          warnings.concat(unpack.warnings);
-        }
         stats.body.stats.push(unpack['port-stats']);
         pos = unpack.offset;
       }
@@ -42,18 +38,10 @@
                                     stats.header.type, offset, (pos - len)));
       }
 
-      if (warnings.length === 0) {
-        return {
-          stats: stats,
-          offset: offset + len
-        };
-      } else {
-        return {
-          stats: stats,
-          warnings: warnings,
-          offset: offset + len
-        };
-      }
+      return {
+        stats: stats,
+        offset: offset + len
+      };
     }
   };
 })();

@@ -15,7 +15,6 @@
         header: {type: 'OFPT_SET_CONFIG'},
         body: {}
       };
-      let warnings = [];
 
       let len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
       if (len !== ofp.sizes.ofp_switch_config) {
@@ -28,45 +27,37 @@
       let flags = buffer.readUInt16BE(offset + offsets.flags, true);
 
       switch (flags & ofp.ofp_config_flags.OFPC_FRAG_MASK) {
-        case ofp.ofp_config_flags.OFPC_FRAG_NORMAL : {
+        case ofp.ofp_config_flags.OFPC_FRAG_NORMAL: {
           message.body.flags.push('OFPC_FRAG_NORMAL');
           break;
         }
-        case ofp.ofp_config_flags.OFPC_FRAG_DROP : {
+        case ofp.ofp_config_flags.OFPC_FRAG_DROP: {
           message.body.flags.push('OFPC_FRAG_DROP');
           break;
         }
-        case ofp.ofp_config_flags.OFPC_FRAG_REASM : {
+        case ofp.ofp_config_flags.OFPC_FRAG_REASM: {
           message.body.flags.push('OFPC_FRAG_REASM');
           break;
         }
-        default : {
-          warnings.push({desc: util.format('%s message at offset %d has invalid frag flags (%d).',
-                                           message.header.type, offset,
-                                           flags & ofp.ofp_config_flags.OFPC_FRAG_MASK)});
+        default: {
+          console.warn('%s message at offset %d has invalid frag flags (%d).',
+                       message.header.type, offset,
+                       flags & ofp.ofp_config_flags.OFPC_FRAG_MASK);
         }
       }
 
       if (flags > ofp.ofp_config_flags.OFPC_FRAG_MASK) {
-        warnings.push({desc: util.format('%s message at offset %d has invalid flags (%d).',
-                                         message.header.type, offset, flags)});
+        console.warn('%s message at offset %d has invalid flags (%d).',
+                     message.header.type, offset, flags);
       }
 
       message.body.miss_send_len = buffer.readUInt16BE(offset + offsets.miss_send_len, true);
       // TODO: validate?
 
-      if (warnings.length === 0) {
-        return {
-          message: message,
-          offset: offset + len
-        };
-      } else {
-        return {
-          message: message,
-          warnings: warnings,
-          offset: offset + len
-        };
-      }
+      return {
+        message: message,
+        offset: offset + len
+      };
     }
   };
 })();

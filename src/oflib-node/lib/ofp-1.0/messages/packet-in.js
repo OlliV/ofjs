@@ -9,16 +9,15 @@
   const ofp = require('../ofp.js');
   const ofputil = require('../../util.js');
 
-  var offsetsHeader = ofp.offsets.ofp_header;
-  var offsets = ofp.offsets.ofp_packet_in;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsets = ofp.offsets.ofp_packet_in;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
+    unpack: function(buffer, offset) {
       var message = {
-        "header" : {"type" : 'OFPT_PACKET_IN'},
-        "body" : {}
+        header: {type: 'OFPT_PACKET_IN'},
+        body: {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -37,7 +36,8 @@
           message.body.in_port = 'OFPP_LOCAL';
         } else {
           message.body.in_port = in_port;
-          warnings.push({"desc" : util.format('%s message at offset %d has invalid in_port (%d).', message.header.type, offset, in_port)});
+          console.warn('%s message at offset %d has invalid in_port (%d).',
+                       message.header.type, offset, in_port);
         }
       } else {
         message.body.in_port = in_port;
@@ -46,20 +46,22 @@
       var reason = buffer.readUInt8(offset + offsets.reason, true);
       if (!(ofputil.setEnum(message.body, 'reason', reason, ofp.ofp_packet_in_reason_rev))) {
         message.body.reason = reason;
-        warnings.push({"desc" : util.format('%s message at offset %d has invalid reason (%d).', message.header.type, offset, reason)});
+        console.warn('%s message at offset %d has invalid reason (%d).',
+                     message.header.type, offset, reason);
       }
 
       var dataLen = len - ofp.sizes.ofp_packet_in - 2; // 2 for padding
 
       if (dataLen > message.body.total_len) {
-        warnings.push({"desc" : util.format('%s message at offset %d has invalid total_len (%d).', message.header.type, offset, total_len)});
+        console.warn('%s message at offset %d has invalid total_len (%d).',
+                     message.header.type, offset, total_len);
       }
 
       if (dataLen > 0) {
         var len = dataLen+4
-          // message.body.data = new Buffer(dataLen+2);
-          // buffer.copy(message.body.data, 0, offset + offsets.data, offset + offsets.data + dataLen); //GB
-          message.body.data = new Buffer(len);
+        // message.body.data = new Buffer(dataLen+2);
+        // buffer.copy(message.body.data, 0, offset + offsets.data, offset + offsets.data + dataLen); //GB
+        message.body.data = new Buffer(len);
         buffer.copy(message.body.data, 0, offset + offsets.data, offset + offsets.data + len); //GB
 
         // console.log("DataLen : " + dataLen + " Start Buffer : " + (offset + offsets.data) + " End Buffer :"  + (offset + offsets.data + len) )
@@ -67,20 +69,10 @@
 
       }
 
-      if (warnings.length == 0) {
-        return {
-          "message" : message,
-          "offset" : offset + len
-        }
-      } else {
-        return {
-          "message" : message,
-          "warnings" : warnings,
-          "offset" : offset + len
-        }
+      return {
+        message: message,
+        offset: offset + len
       }
     }
-
   }
-
 })();

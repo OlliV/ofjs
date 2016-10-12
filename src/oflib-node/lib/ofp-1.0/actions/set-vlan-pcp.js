@@ -25,14 +25,8 @@
       action.body.vlan_pcp = buffer.readUInt8(offset + offsets.vlan_pcp, true);
 
       if (action.body.vlan_pcp > packet.VLAN_PCP_MAX) {
-        return {
-          action: action,
-          warnings: [{
-            desc: util.format('%s action at offset %d has invalid pcp (%d).', action.header.type, offset, action.body.vlan_pcp),
-            type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_OUT_ARGUMENT'
-          }],
-          offset: offset + len
-        };
+        console.warn('%s action at offset %d has invalid pcp (%d).',
+                     action.header.type, offset, action.body.vlan_pcp);
       }
 
       return {

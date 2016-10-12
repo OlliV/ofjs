@@ -20,7 +20,6 @@
         },
         body: {}
       };
-      let warnings = [];
 
       let len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -30,9 +29,6 @@
       }
 
       let unpack = match.unpack(buffer, offset + offsets.match);
-      if ('warnings' in unpack) {
-        warnings.concat(unpack.warnings);
-      }
       message.body.match = unpack.match;
 
       // TODO: Sanity check and remove unused fields vs. command
@@ -42,11 +38,7 @@
       let command = buffer.readUInt16BE(offset + offsets.command, true);
       if (!(ofputil.setEnum(message.body, 'command', command, ofp.ofp_flow_mod_command_rev))) {
         message.body.command = command;
-        warnings.push({
-          desc: util.format('%s message at offset %d has invalid command (%d).', message.header.type, offset, len),
-          type: 'OFPET_FLOW_MOD_FAILED',
-          code: 'OFPFMFC_BAD_COMMAND'
-        });
+        console.warn('%s message at offset %d has invalid command (%d).', message.header.type, offset, len);
       }
 
       ofputil.setIfNotEq(message.body, 'idle_timeout', buffer.readUInt16BE(offset + offsets.idle_timeout, true), 0);
@@ -60,11 +52,8 @@
       if (out_port > ofp.ofp_port.OFPP_MAX) {
         if (out_port !== ofp.ofp_port.OFPP_ANY) {
           message.body.out_port = out_port;
-          warnings.push({
-            desc: util.format('%s message at offset %d has invalid out_port (%d).', message.header.type, offset, out_port),
-            type: 'OFPET_FLOW_MOD_FAILED',
-            code: 'OFPFMFC_BAD_UNKNOWN'
-          });
+          console.warn('%s message at offset %d has invalid out_port (%d).',
+                       message.header.type, offset, out_port);
         }
       } else {
         message.body.out_port = out_port;
@@ -73,11 +62,7 @@
       let flags = buffer.readUInt16BE(offset + offsets.flags, true);
       let flagsParsed = ofputil.parseFlags(flags, ofp.ofp_flow_mod_flags);
       if (flagsParsed.remain !== 0) {
-        warnings.push({
-          desc: util.format('%s message at offset %d has invalid flags (%d).', message.header.type, offset, flags),
-          type: 'OFPET_FLOW_MOD_FAILED',
-          code: 'OFPFMFC_UNKNOWN'
-        });
+          console.warn('%s message at offset %d has invalid flags (%d).', message.header.type, offset, flags);
       }
       message.body.flags = flagsParsed.array;
 
@@ -85,13 +70,10 @@
       message.body.actions = [];
 
       // NOTE: ofp_flow_mod does contain a standard match structure!
-      var pos = offset + offsets.actions;
+      let pos = offset + offsets.actions;
       while (pos < offset + len) {
         let unpack = action.unpack(buffer, pos);
 
-        if ('warnings' in unpack) {
-          warnings.concat(unpack.warnings);
-        }
         message.body.actions.push(unpack.action);
         pos = unpack.offset;
       }
@@ -101,22 +83,12 @@
                                     message.header.type, offset, (pos - len)));
       }
 
-      if (warnings.length === 0) {
-        return {
-          message: message,
-          offset: offset + len
-        };
-      } else {
-        return {
-          message: message,
-          warnings: warnings,
-          offset: offset + len
-        };
-      }
+      return {
+        message: message,
+        offset: offset + len
+      };
     },
     pack: function (message, buffer, offset) {
-      let warnings = [];
-
       if (buffer.length < offset + ofp.sizes.ofp_flow_mod) {
         throw new Error(util.format('%s message at offset %d does not fit the buffer.',
                                     message.header.type, offset));
@@ -131,13 +103,13 @@
         // buffer.fill(0xff, offset + offsets.cookie_mask, offset + offsets.cookie_mask + 8); // TODO fill ?
       }
 
+      let command;
       if (message.body.command in ofp.ofp_flow_mod_command) {
-        var command = ofp.ofp_flow_mod_command[message.body.command];
+        command = ofp.ofp_flow_mod_command[message.body.command];
       } else {
-        var command = 0;
-        warnings.push({
-          desc: util.format('%s message at offset %d has invalid command (%s).', message.header.type, offset, message.body.command)
-        });
+        command = 0;
+        console.warn('%s message at offset %d has invalid command (%s).',
+                     message.header.type, offset, message.body.command);
       }
       buffer.writeUInt16BE(command, offset + offsets.command, true); //GB check this!!
 
@@ -164,7 +136,7 @@
           out_port = ofp.ofp_port[message.body.out_port]
         }
       } else {
-          out_port = ofp.ofp_port_no.OFPP_ANY;
+        out_port = ofp.ofp_port_no.OFPP_ANY;
       }
       buffer.writeUInt32BE(out_port, offset + offsets.out_port, true);
 
@@ -173,37 +145,19 @@
         if (f in ofp.ofp_flow_mod_flags) {
           flags |= ofp.ofp_flow_mod_flags[f];
         } else {
-          warnings.push({
-            desc: util.format('%s message at offset %d has invalid flag (%s).', message.header.type, offset, f)
-          });
+          console.warn('%s message at offset %d has invalid flag (%s).',
+                       message.header.type, offset, f);
         }
       });
       buffer.writeUInt16BE(flags, offset + offsets.flags, true);
       // buffer.fill(0, offset + offsets.pad, offset + offsets.pad + 2);
 
 
-      let pack1 = match.pack(message.body.match, buffer, offset + offsets.match);
-      if ('warnings' in pack1) {
-        warnings.concat(pack1.warnings);
-      }
+      const pack1 = match.pack(message.body.match, buffer, offset + offsets.match);
+      const pack2 = action.pack(message.body.actions, buffer, offset + offsets.actions);
+      const pos = offset + offsets.actions + 8;
 
-      let pack2 = action.pack(message.body.actions, buffer, offset + offsets.actions);
-      if ('warnings' in pack2) {
-        warnings.concat(pack2.warnings);
-      }
-
-      var pos = offset + offsets.actions + 8;
-
-      if (warnings.length === 0) {
-        return {
-          offset: pos
-        };
-      } else {
-        return {
-          warnings: warnings,
-          offset: pos
-        };
-      }
+      return { offset: pos };
     }
   };
 })();

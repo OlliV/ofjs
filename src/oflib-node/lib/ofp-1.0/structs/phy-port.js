@@ -16,7 +16,6 @@
 
     unpack: function(buffer, offset) {
       var port = {};
-      var warnings = [];
 
       if (buffer.length < ofp.sizes.ofp_phy_port) {
         throw new Error(util.format('port at offset %d has invalid length (%d).', offset, len));
@@ -28,7 +27,8 @@
         if (port.port_no == ofp.ofp_port.OFPP_LOCAL) {
           port.port_no = 'OFPP_LOCAL';
         } else {
-          warnings.push({desc: util.format('port at offset %d has invalid port_no (%d).', offset, port.port_no)});
+          console.warn('port at offset %d has invalid port_no (%d).',
+                       offset, port.port_no);
         }
       }
 
@@ -41,14 +41,16 @@
       var configParsed = ofputil.parseFlags(config, ofp.ofp_port_config);
       port.config = configParsed.array;
       if (configParsed.remain != 0) {
-        warnings.push({desc: util.format('port at offset %d has invalid config (%d).', offset, config)});
+        console.warn('port at offset %d has invalid config (%d).',
+                     offset, config);
       }
 
       var state = buffer.readUInt32BE(offset + offsets.state, true);
       var stateParsed = ofputil.parseFlags(state, ofp.ofp_port_state);
       port.state = stateParsed.array;
       if (stateParsed.remain != 0) {
-        warnings.push({desc: util.format('port at offset %d has invalid state (%d).', offset, state)});
+        console.warn('port at offset %d has invalid state (%d).',
+                     offset, state);
       }
 
       var curr = buffer.readUInt32BE(offset + offsets.curr, true);
@@ -56,7 +58,8 @@
         var currParsed = ofputil.parseFlags(curr, ofp.ofp_port_features);
         port.curr = currParsed.array;
         if (currParsed.remain != 0) {
-          warnings.push({desc: util.format('port at offset %d has invalid curr (%d).', offset, curr)});
+          console.warn('port at offset %d has invalid curr (%d).',
+                       offset, curr);
         }
       }
 
@@ -65,7 +68,8 @@
         var advertisedParsed = ofputil.parseFlags(advertised, ofp.ofp_port_features);
         port.advertised = advertisedParsed.array;
         if (advertisedParsed.remain != 0) {
-          warnings.push({desc: util.format('port at offset %d has invalid advertised (%d).', offset, advertised)});
+          console.warn('port at offset %d has invalid advertised (%d).',
+                       offset, advertised);
         }
       }
 
@@ -74,7 +78,8 @@
         var supportedParsed = ofputil.parseFlags(supported, ofp.ofp_port_features);
         port.supported = supportedParsed.array;
         if (supportedParsed.remain != 0) {
-          warnings.push({desc: util.format('port at offset %d has invalid supported (%d).', offset, supported)});
+          console.warn('port at offset %d has invalid supported (%d).',
+                       offset, supported);
         }
       }
 
@@ -83,22 +88,15 @@
         var peerParsed = ofputil.parseFlags(peer, ofp.ofp_port_features);
         port.peer = peerParsed.array;
         if (peerParsed.remain != 0) {
-          warnings.push({desc: util.format('port at offset %d has invalid peer (%d).', offset, peer)});
+          console.warn('port at offset %d has invalid peer (%d).',
+                       offset, peer);
         }
       }
 
-      if (warnings.length == 0) {
-        return {
-          'phy-port': port,
-          offset: offset + ofp.sizes.ofp_phy_port
-        };
-      } else {
-        return {
-          'phy-port': port,
-          warnings: warnings,
-          offset: offset + ofp.sizes.ofp_phy_port
-        };
-      }
+      return {
+        'phy-port': port,
+        offset: offset + ofp.sizes.ofp_phy_port
+      };
     }
   }
 })();

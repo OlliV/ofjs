@@ -19,7 +19,6 @@
         "header" : {"type" : 'OFPT_PORT_MOD'},
         "body" : {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -30,10 +29,8 @@
 
       message.body.port_no = buffer.readUInt16BE(offset + offsets.port_no, true);
       if (message.body.port_no > ofp.ofp_port.OFPP_MAX) {
-        warnings.push({
-          "error" : util.format('%s message at offset %d has invalid port_no (%d).', message.header.type, offset, message.body.port_no),
-          "type" : 'OFPET_PORT_MOD_FAILED', "code" : 'OFPOMFC_BAD_PORT'
-        });
+        console.error('%s message at offset %d has invalid port_no (%d).',
+                      message.header.type, offset, message.body.port_no);
       }
 
       message.body.hw_addr = packet.ethToString(buffer, offset + offsets.hw_addr);
@@ -43,46 +40,30 @@
 
       var configSetParsed = ofputil.parseFlags((config & mask), ofp.ofp_port_config);
       if (configSetParsed.remain != 0) {
-        warnings.push({
-          "error" : util.format('%s message at offset %d has invalid config (%d).', message.header.type, offset, config),
-          "type" : 'OFPET_PORT_MOD_FAILED', "code" : 'OFPPMFC_BAD_CONFIG'
-        });
+        console.error('%s message at offset %d has invalid config (%d).',
+                      message.header.type, offset, config);
       }
       message.body.config_set = configSetParsed.array;
 
       var configUnsetParsed = ofputil.parseFlags((~config & mask), ofp.ofp_port_config);
       if (configUnsetParsed.remain != 0) {
-        warnings.push({
-          "error" : util.format('%s message at offset %d has invalid config (%d).', message.header.type, offset, config),
-          "type" : 'OFPET_PORT_MOD_FAILED', "code" : 'OFPPMFC_BAD_CONFIG'
-        });
+        console.error('%s message at offset %d has invalid config (%d).',
+                      message.header.type, offset, config);
       }
       message.body.config_unset = configUnsetParsed.array;
 
       var advertise = buffer.readUInt32BE(offset + offsets.advertise, true);
       var advertiseParsed = ofputil.parseFlags(advertise, ofp.ofp_port_features);
       if (advertiseParsed.remain != 0) {
-        warnings.push({
-          "error" : util.format('%s message at offset %d has invalid advertise (%d).', message.header.type, offset, advertise),
-          "type" : 'OFPET_PORT_MOD_FAILED', "code" : 'OFPPMFC_BAD_ADVERTISE'
-        });
+        console.error('%s message at offset %d has invalid advertise (%d).',
+                      message.header.type, offset, advertise);
       }
       message.body.advertise = advertiseParsed.array;
 
-      if (warnings.length == 0) {
-        return {
-          "message" : message,
-          "offset" : offset + len
-        }
-      } else {
-        return {
-          "message" : message,
-          "warnings" : warnings,
-          "offset" : offset + len
-        }
+      return {
+        "message" : message,
+        "offset" : offset + len
       }
     }
-
   }
-
 })();

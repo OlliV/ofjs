@@ -8,16 +8,15 @@
   const util = require('util');
   const ofp = require('../ofp.js');
 
-  var offsetsHeader = ofp.offsets.ofp_header;
-  var offsets = ofp.offsets.ofp_queue_get_config_request;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsets = ofp.offsets.ofp_queue_get_config_request;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
+    unpack: function(buffer, offset) {
       var message = {
-        "header" : {"type" : 'OFPT_QUEUE_GET_CONFIG_REQUEST'},
-        "body" : {}
+        header: {type: 'OFPT_QUEUE_GET_CONFIG_REQUEST'},
+        body: {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -32,31 +31,19 @@
           message.body.port = 'OFPP_ALL';
         } else {
           message.body.port = port;
-          warnings.push({
-            "desc" : util.format('%s message at offset %d has invalid port (%d).', message.header.type, offset, port),
-            "type" : 'OFPET_QUEUE_OP_FAILED', "code" : 'OFPQOFC_BAD_PORT'
-          });
+          console.warn('%s message at offset %d has invalid port (%d).',
+                       message.header.type, offset, port);
         }
       } else {
         message.body.port = port;
       }
 
-      if (warnings.length == 0) {
-        return {
-          "message" : message,
-          "offset" : offset + len
-        }
-      } else {
-        return {
-          "message" : message,
-          "warnings" : warnings,
-          "offset" : offset + len
-        }
+      return {
+        message: message,
+        offset: offset + len
       }
     }
-
   }
-
 })();
 
 

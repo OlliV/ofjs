@@ -17,15 +17,14 @@
   const queue = require('./stats/queue-reply.js');
   const table = require('./stats/table-reply.js');
 
-  var offsetsHeader = ofp.offsets.ofp_header;
-  var offsets = ofp.offsets.ofp_stats_reply;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsets = ofp.offsets.ofp_stats_reply;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
-      var message = {
-        "header" : {"type" : 'OFPT_STATS_REPLY'}
+    unpack : function(buffer, offset) {
+      let message = {
+        header: {type: 'OFPT_STATS_REPLY'}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -48,10 +47,6 @@
           throw new Error(util.format('%s message at offset %d has invalid type (%d).',
                                       message.header.type, offset, type));
       }
-
-      if ('warnings' in unpack) {
-        warnings.concat(unpack.warnings);
-      }
       message.body = unpack.stats;
 
 
@@ -59,26 +54,15 @@
       var flagsParsed = ofputil.parseFlags(flags, ofp.ofp_stats_reply_flags);
       if (flagsParsed.remain != 0) {
         message.body.header.flags = flags;
-        warnings.push({
-          "desc" : util.format('%s message at offset %d has invalid flags (%d).', message.header.type, offset, flags)
-        });
+        console.warn('%s message at offset %d has invalid flags (%d).',
+                     message.header.type, offset, flags);
       }
       message.body.header.flags = flagsParsed.array;
 
-      if (warnings.length == 0) {
-        return {
-          "message" : message,
-          "offset" : offset + len
-        }
-      } else {
-        return {
-          "message" : message,
-          "warnings" : warnings,
-          "offset" : offset + len
-        }
+      return {
+        message: message,
+        offset: offset + len
       }
     }
-
   }
-
 })();

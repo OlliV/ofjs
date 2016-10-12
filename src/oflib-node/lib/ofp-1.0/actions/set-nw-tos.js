@@ -26,14 +26,8 @@
       action.body.nw_tos = buffer.readUInt8(offset + offsets.nw_tos);
 
       if (action.body.nw_ecn > packet.IP_DSCP_MAX) {
-        return {
-          action: action,
-          warnings: [{
-            desc: util.format('%s action at offset %d has invalid tos (%d).', action.header.type, offset, action.body.nw_tos),
-            type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_OUT_ARGUMENT'
-          }],
-          offset: offset + len
-        };
+        console.warn('%s action at offset %d has invalid tos (%d).',
+                     action.header.type, offset, action.body.nw_tos);
       }
 
       return {

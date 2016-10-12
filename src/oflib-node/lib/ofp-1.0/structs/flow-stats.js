@@ -19,7 +19,6 @@
 
     unpack : function(buffer, offset) {
       var flowStats = {};
-      var warnings = [];
 
       if (buffer.length < offset + ofp.sizes.ofp_flow_stats) {
         throw new Error(util.format('flow-stats at offset %d has invalid length (%d).',
@@ -35,13 +34,11 @@
 
       flowStats.table_id = buffer.readUInt8(offset + offsets.table_id);
       if (flowStats.table_id > ofp.ofp_table.OFPTT_MAX) {
-        warnings.push({"desc" : util.format('flow-stats at offset %d has invalid table_id (%d).', offset, flowStats.table_id)});
+        console.warn('flow-stats at offset %d has invalid table_id (%d).',
+                     offset, flowStats.table_id);
       }
 
       var unpack = match.unpack(buffer, offset + offsets.match);
-      if ('warnings' in unpack) {
-        warnings.concat(unpack.warnings);
-      }
       flowStats.match = unpack.match;
 
       flowStats.duration_sec = buffer.readUInt32BE(offset + offsets.duration_sec, true);
@@ -70,9 +67,6 @@
       while (pos < offset + len) {
         var act = action.unpack(buffer, pos);
 
-        if ('warnings' in act) {
-          warnings.concat(act.warnings);
-        }
         flowStats.actions.push(act.action);
         pos = act.offset;
       }
@@ -82,19 +76,10 @@
                         offset, (pos - len)));
       }
 
-      if (warnings.length == 0) {
-        return {
-          'flow-stats': flowStats,
-          offset: offset + len
-        }
-      } else {
-        return {
-          'flow-stats': flowStats,
-          warnings: warnings,
-          offset: offset + len
-        }
+      return {
+        'flow-stats': flowStats,
+        offset: offset + len
       }
     }
   }
-
 })();

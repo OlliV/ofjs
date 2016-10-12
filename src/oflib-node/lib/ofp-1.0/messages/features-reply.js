@@ -17,7 +17,6 @@
         header: {type: 'OFPT_FEATURES_REPLY'},
         body: {}
       };
-      let warnings = [];
 
       let len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -34,8 +33,8 @@
       let capabilities = buffer.readUInt32BE(offset + offsets.capabilities, true);
       let capabilitiesParsed = ofputil.parseFlags(capabilities, ofp.ofp_capabilities);
       if (capabilitiesParsed.remain !== 0) {
-        warnings.push({desc: util.format('%s message at offset %d has invalid capabilities (%d).',
-                      message.header.type, offset, capabilities)});
+        console.warn('%s message at offset %d has invalid capabilities (%d).',
+                     message.header.type, offset, capabilities);
       }
       message.body.capabilities = capabilitiesParsed.array;
 
@@ -43,8 +42,8 @@
       let actionsParsed = ofputil.parseFlags(actions, ofp.ofp_action_type_flags);
       message.body.actions = actionsParsed.array;
       if (actionsParsed.remain !== 0) {
-        warnings.push({desc: util.format('%s message at offset %d has invalid actions (%d).',
-                      message.header.type, offset, actions)});
+        console.warn('%s message at offset %d has invalid actions (%d).',
+                     message.header.type, offset, actions);
       }
 
       message.body.ports = [];
@@ -53,9 +52,6 @@
       while (pos < offset + len) {
         let unpack = phyPort.unpack(buffer, pos);
 
-        if ('warnings' in unpack) {
-          warnings.concat(unpack.warnings);
-        }
         message.body.ports.push(unpack['phy-port']);
         pos = unpack.offset;
       }
@@ -64,18 +60,10 @@
         throw new Error(util.format('%s message at offset %d has extra bytes (%d).', message.header.type, offset, (pos - len)));
       }
 
-      if (warnings.length === 0) {
-        return {
-          message: message,
-          offset: offset + len
-        };
-      } else {
-        return {
-          message: message,
-          warnings: warnings,
-          offset: offset + len
-        };
-      }
+      return {
+        message: message,
+        offset: offset + len
+      };
     }
   };
 })();

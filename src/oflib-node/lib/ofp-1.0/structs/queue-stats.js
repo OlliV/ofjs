@@ -8,14 +8,13 @@
   const ofp = require('../ofp.js');
   const ofputil = require('../../util.js');
 
-  var offsets = ofp.offsets.ofp_queue_stats;
+  const offsets = ofp.offsets.ofp_queue_stats;
 
   module.exports = {
-    "struct" : 'queue-stats',
+    struct: 'queue-stats',
 
-    "unpack" : function(buffer, offset) {
+    unpack: function(buffer, offset) {
       var queueStats = {};
-      var warnings = [];
 
       if (buffer.length < ofp.sizes.ofp_queue_stats) {
         throw new Error(util.format('queue-stats at offset %d has invalid length (%d).', offset, len));
@@ -27,13 +26,15 @@
         if (queueStats.port_no == ofp.ofp_port.OFPP_LOCAL) {
           queueStats.port_no = 'OFPP_LOCAL';
         } else {
-          warnings.push({"desc" : util.format('queue-stats at offset %d has invalid port_no (%d).', offset, queueStats.port_no)});
+          console.warn('queue-stats at offset %d has invalid port_no (%d).',
+                       offset, queueStats.port_no);
         }
       }
 
       queueStats.queue_id = buffer.readUInt32BE(offset + offsets.queue_id, true);
       if (queueStats.queue_id > ofp.OFPQ_MAX) {
-        warnings.push({"desc" : util.format('queue-stats at offset %d has invalid queue_id (%d).', offset, queueStats.queue_id)});
+        console.warn('queue-stats at offset %d has invalid queue_id (%d).',
+                     offset, queueStats.queue_id);
       }
 
       var tx_bytes = [buffer.readUInt32BE(offset + offsets.tx_bytes, true), buffer.readUInt32BE(offset + offsets.tx_bytes + 4, true)];
@@ -51,20 +52,10 @@
         queueStats.tx_errors = tx_errors;
       }
 
-      if (warnings.length == 0) {
-        return {
-          "queue-stats" : queueStats,
-          "offset" : offset + ofp.sizes.ofp_queue_stats
-        };
-      } else {
-        return {
-          "queue-stats" : queueStats,
-          "warnings" : warnings,
-          "offset" : offset + ofp.sizes.ofp_queue_stats
-        };
-      }
+      return {
+        'queue-stats': queueStats,
+        offset: offset + ofp.sizes.ofp_queue_stats
+      };
     }
-
   }
-
 })();

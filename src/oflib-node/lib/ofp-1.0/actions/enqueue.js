@@ -14,7 +14,6 @@
         header: {type: 'OFPAT_ENQUEUE'},
         body: {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsets.len, true);
 
@@ -26,45 +25,28 @@
       action.body.port = buffer.readUInt16BE(offset + offsets.port, true);
 
       if (action.body.port === 0) {
-        warnings.puish({
-          desc: util.format('%s action at offset %d has invalid port (%d).',
-                            action.header.type, offset, action.body.port),
-          type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_OUT_PORT'
-        });
+        console.warn('%s action at offset %d has invalid port (%d).',
+                     action.header.type, offset, action.body.port);
       } else if (action.body.port > ofp.ofp_port.OFPP_MAX) {
         if (action.body.port === ofp.ofp_port.OFPP_IN_PORT) {
           action.body.port = 'OFPP_IN_PORT';
         } else {
-          warnings.puish({
-            desc: util.format('%s action at offset %d has invalid port (%d).',
-                              action.header.type, offset, action.body.port),
-            type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_OUT_PORT'
-          });
+          console.warn('%s action at offset %d has invalid port (%d).',
+                       action.header.type, offset, action.body.port);
         }
       }
 
       action.body.queue_id = buffer.readUInt32BE(offset + offsets.queue_id, true);
 
       if (action.body.queue_id === ofp.OFPQ_ALL) {
-        warnings.puish({
-          desc: util.format('%s action at offset %d has invalid queue_id (%d).',
-                            action.header.type, offset, action.body.queue_id),
-          type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_ARGUMENT'
-        });
+          console.warn('%s action at offset %d has invalid queue_id (%d).',
+                       action.header.type, offset, action.body.queue_id);
       }
 
-      if (warnings.length === 0) {
-        return {
-          action: action,
-          offset: offset + len
-        };
-      } else {
-        return {
-          action: action,
-          warnings: warnings,
-          offset: offset + len
-        };
-      }
+      return {
+        action: action,
+        offset: offset + len
+      };
     }
   };
 })();

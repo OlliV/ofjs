@@ -8,8 +8,8 @@
   const ofputil = require('../../util.js');
   const match = require('../structs/match.js');
 
-  let offsetsHeader = ofp.offsets.ofp_header;
-  let offsets = ofp.offsets.ofp_flow_removed;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsets = ofp.offsets.ofp_flow_removed;
 
   module.exports = {
     unpack: function (buffer, offset) {
@@ -17,7 +17,6 @@
         header: {type: 'OFPT_FLOW_REMOVED'},
         body: {}
       };
-      let warnings = [];
 
       let len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -28,9 +27,6 @@
 
       // NOTE: ofp_flow_mod does contain a standard match structure!
       var unpack = match.unpack(buffer, offset + offsets.match);
-      if ('warnings' in unpack) {
-        warnings.concat(unpack.warnings);
-      }
       message.body.match = unpack.match;
 
       message.body.cookie = new Buffer(8);
@@ -41,8 +37,8 @@
       let reason = buffer.readUInt8(offset + offsets.reason, true);
       if (!ofputil.setEnum(message.body, 'reason', reason, ofp.ofp_flow_removed_reason_rev)) {
         message.body.reason = reason;
-        warnings.push({desc: util.format('%s message at offset %d has invalid reason (%d).',
-                                         message.header.type, offset, reason)});
+        console.warn('%s message at offset %d has invalid reason (%d).',
+                     message.header.type, offset, reason);
       }
 
       message.body.duration_sec = buffer.readUInt32BE(offset + offsets.duration_sec);
@@ -56,18 +52,10 @@
       message.body.byte_count = [buffer.readUInt32BE(offset + offsets.byte_count, true),
       buffer.readUInt32BE(offset + offsets.byte_count + 4, true)];
 
-      if (warnings.length === 0) {
-        return {
-          message: message,
-          offset: offset + len
-        };
-      } else {
-        return {
-          message: message,
-          warnings: warnings,
-          offset: offset + len
-        };
-      }
+      return {
+        message: message,
+        offset: offset + len
+      };
     }
   };
 })();

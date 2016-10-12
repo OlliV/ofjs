@@ -10,16 +10,15 @@
   const ofputil = require('../../util.js');
   const phyPort = require('../structs/phy-port.js');
 
-  var offsetsHeader = ofp.offsets.ofp_header;
-  var offsets = ofp.offsets.ofp_port_status;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsets = ofp.offsets.ofp_port_status;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
+    unpack: function(buffer, offset) {
       var message = {
-        "header" : {"type" : 'OFPT_PORT_STATUS'},
-        "body" : {}
+        header: {type: 'OFPT_PORT_STATUS'},
+        body: {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -30,33 +29,17 @@
 
       var reason = buffer.readUInt8(offset + offsets.reason, true);
       if (!(ofputil.setEnum(message.body, 'reason', reason, ofp.ofp_port_reason_rev))) {
-        message.body.reason = reason;
-        warnings.push({
-          "desc" : util.format('%s message at offset %d has invalid reason (%d).', message.header.type, offset, reason)
-        });
+        console.warn('%s message at offset %d has invalid reason (%d).',
+                     message.header.type, offset, reason);
       }
 
       var desc = phyPort.unpack(buffer, offset + offsets.desc);
-      if ('warnings' in desc) {
-        warnings.concat(desc.warnings);
-      }
-
       message.body.desc = desc['phy-port'];
 
-      if (warnings.length == 0) {
-        return {
-          "message" : message,
-          "offset" : offset + len
-        }
-      } else {
-        return {
-          "message" : message,
-          "warnings" : warnings,
-          "offset" : offset + len
-        }
+      return {
+        message: message,
+        offset: offset + len
       }
     }
-
   }
-
 })();

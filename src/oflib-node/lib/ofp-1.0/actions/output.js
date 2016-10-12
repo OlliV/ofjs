@@ -25,12 +25,10 @@
       action.body.port = buffer.readUInt16BE(offset + offsets.port, true);
 
       if (action.body.port === 0) {
+        console.warn('%s action at offset %d has invalid port (%d).',
+                     action.header.type, offset, action.body.port);
         return {
           action: action,
-          warnings: [{
-            desc: util.format('%s action at offset %d has invalid port (%d).', action.header.type, offset, action.body.port),
-            type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_OUT_PORT'
-          }],
           offset: offset + len
         };
       }
@@ -55,12 +53,10 @@
       if (action.body.port === ofp.ofp_port.OFPP_ALL) {
         action.body.port = 'OFPP_ALL';
 
+        console.warn('%s action at offset %d has invalid port (%d).',
+                     action.header.type, offset, action.body.port);
         return {
           action: action,
-          warnings: [{
-            desc: util.format('%s action at offset %d has invalid port (%d).', action.header.type, offset, action.body.port),
-            type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_OUT_PORT'
-          }],
           offset: offset + len
         };
       }
@@ -73,12 +69,10 @@
           offset: offset + len
         };
       } else {
+        console.warn('%s action at offset %d has invalid port (%d).',
+                     action.header.type, offset, action.body.port);
         return {
           action: action,
-          warnings: [{
-            desc: util.format('%s action at offset %d has invalid port (%d).', action.header.type, offset, action.body.port),
-            type: 'OFPET_BAD_ACTION', code: 'OFPBAC_BAD_OUT_PORT'
-          }],
           offset: offset + len
         };
       }
@@ -113,13 +107,9 @@
         // buffer.writeUInt16BE(0, offset + offsets.max_len, true);
         // buffer.fill(0, offset + offsets.pad, offset + offsets.pad + 6);
 
-        return {
-          warnings: [{
-            desc: util.format('%s action at offset %d has invalid port (%d).',
-                              action.header.type, offset, action.body.port)
-          }],
-          offset: offset + ofp.sizes.ofp_action_output
-        };
+        console.warn('%s action at offset %d has invalid port (%d).',
+                     action.header.type, offset, action.body.port);
+        return { offset: offset + ofp.sizes.ofp_action_output };
       }
 
       /* special values */
@@ -132,11 +122,9 @@
         buffer.writeUInt16BE(action.body.port, offset + offsets.port, true);
         // buffer.writeUInt16BE(0, offset + offsets.max_len, true);
         //buffer.fill(0, offset + offsets.pad, offset + offsets.pad + 6);
+        console.warn('%s action at offset %d has invalid port (%d).',
+                     action.header.type, offset, action.body.port);
         return {
-          warnings: [{
-            desc: util.format('%s action at offset %d has invalid port (%d).',
-                              action.header.type, offset, action.body.port)
-          }],
           offset: offset + ofp.sizes.ofp_action_output
         };
       }

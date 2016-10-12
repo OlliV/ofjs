@@ -9,15 +9,14 @@
   const ofp = require('../../ofp.js');
   const flowStats = require('../../structs/flow-stats.js');
 
-  var offsetsHeader = ofp.offsets.ofp_header;
+  const offsetsHeader = ofp.offsets.ofp_header;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
+    unpack: function(buffer, offset) {
       var stats = {
-        "header" : {"type" : 'OFPST_FLOW'},
-        "body" : {}
+        header: {type: 'OFPST_FLOW'},
+        body: {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -32,9 +31,6 @@
       while (pos < offset + len) {
         var unpack = flowStats.unpack(buffer, pos);
 
-        if ('warnings' in unpack) {
-          warnings.concat(unpack.warnings);
-        }
         stats.body.stats.push(unpack['flow-stats']);
         pos = unpack.offset;
       }
@@ -44,20 +40,10 @@
                                     stats.header.type, offset, (pos - len)));
       }
 
-      if (warnings.length = 0) {
-        return {
-          "stats" : stats,
-          "offset" : offset + len
-        }
-      } else {
-        return {
-          "stats" : stats,
-          "warnings" : warnings,
-          "offset" : offset + len
-        }
+      return {
+        stats: stats,
+        offset: offset + len
       }
     }
-
   }
-
 })();

@@ -2,10 +2,8 @@
  * Author: Zoltán Lajos Kis <zoltan.lajos.kis@ericsson.com>
  */
 
-import util from 'util';
-
 module.exports = {
-  "parseFlags" : function parseFlags(flags, map) {
+  parseFlags: function parseFlags(flags, map) {
     var array = [];
     var remain = flags;
 
@@ -21,18 +19,18 @@ module.exports = {
     }
 
     return {
-      "array" : array,
-      "remain" : remain
+      array: array,
+      remain: remain
     }
   },
 
-  "setIfNotEq" : function setIfNotEq(obj, prop, value, guard) {
+  setIfNotEq: function setIfNotEq(obj, prop, value, guard) {
     if (value != guard) {
       obj[prop] = value;
     }
   },
 
-  "setEnum" : function setEnum(obj, prop, value, map) {
+  setEnum: function setEnum(obj, prop, value, map) {
     if (map[value] == undefined) {
       return false;
     }
@@ -40,6 +38,6 @@ module.exports = {
     return true;
   },
 
-  "isUint64None" : function(uint64) { return (uint64[0] == 0x00000000 && uint64[1] == 0x00000000); },
-  "isUint64All" : function(uint64) { return (uint64[0] == 0xffffffff && uint64[1] == 0xffffffff); }
+  isUint64None: function(uint64) { return (uint64[0] == 0x00000000 && uint64[1] == 0x00000000); },
+  isUint64All: function(uint64) { return (uint64[0] == 0xffffffff && uint64[1] == 0xffffffff); }
 }

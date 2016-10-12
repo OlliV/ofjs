@@ -7,8 +7,8 @@
   const ofp = require('../ofp.js');
   const queue = require('../structs/packet-queue.js');
 
-  let offsetsHeader = ofp.offsets.ofp_header;
-  let offsets = ofp.offsets.ofp_queue_get_config_reply;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsets = ofp.offsets.ofp_queue_get_config_reply;
 
   module.exports = {
     unpack: function (buffer, offset) {
@@ -16,7 +16,6 @@
         header: {type: 'OFPT_QUEUE_GET_CONFIG_REPLY'},
         body: {}
       };
-      let warnings = [];
 
       let len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -27,10 +26,8 @@
 
       let port = buffer.readUInt16BE(offset + offsets.port, true);
       if (port > ofp.ofp_port.OFPP_MAX) {
-        warnings.push({
-          desc: util.format('%s message at offset %d has invalid length (%d).',
-                            message.header.type, offset, len)
-        });
+        console.watn('%s message at offset %d has invalid length (%d).',
+                     message.header.type, offset, len);
       }
       message.body.port = port;
 
@@ -39,10 +36,6 @@
       let pos = offset + offsets.queues;
       while (pos < offset + len) {
         let unpack = queue.unpack(buffer, pos);
-
-        if ('warnings' in unpack) {
-          warnings.concat(unpack.warnings);
-        }
 
         message.body.queues.push(unpack['packet-queue']);
         pos = unpack.offset;
@@ -53,18 +46,10 @@
                                     message.header.type, offset, (pos - len)));
       }
 
-      if (warnings.length === 0) {
-        return {
-          message: message,
-          offset: offset + len
-        };
-      } else {
-        return {
-          message: message,
-          warnings: warnings,
-          offset: offset + len
-        };
-      }
+      return {
+        message: message,
+        offset: offset + len
+      };
     }
   };
 })();

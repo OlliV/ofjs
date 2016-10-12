@@ -16,7 +16,6 @@
         header: {type: 'OFPT_ERROR'},
         body: {}
       };
-      let warnings = [];
 
       let len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
       if (len < ofp.sizes.ofp_error_msg) {
@@ -32,14 +31,14 @@
         let errorCodeMapName = message.body.type.toLowerCase().replace('ofpet_', 'ofp_') + '_code_rev';
         if (!(ofputil.setEnum(message.body, 'code', code, ofp[errorCodeMapName]))) {
           message.body.code = code;
-          warnings.push({desc: util.format('%s message at offset %d has invalid code (%d).',
-                        message.header.type, offset, code)});
+          console.warn('%s message at offset %d has invalid code (%d).',
+                       message.header.type, offset, code);
         }
       } else {
         message.body.type = type;
         message.body.code = code;
-        warnings.push({desc: util.format('%s message at offset %d has invalid type (%d).',
-                      message.header.type, offset, type)});
+        console.warn('%s message at offset %d has invalid type (%d).',
+                     message.header.type, offset, type);
       }
 
       var dataLen = len - ofp.sizes.ofp_error_msg;

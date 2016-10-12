@@ -19,7 +19,6 @@
         header: {"type" : 'OFPT_PACKET_OUT'},
         body: {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -36,10 +35,8 @@
           message.body.in_port = 'OFPP_CONTROLLER';
         } else {
           message.body.in_port = in_port;
-          warnings.push({
-            desc: util.format('%s message at offset %d has invalid in_port (%d).', message.header.type, offset, in_port),
-            type: 'OFPBAC_BAD_ACTION', "code" : 'OFPBAC_BAD_ARGUMENT'
-          });
+          console.warn('%s message at offset %d has invalid in_port (%d).',
+                       message.header.type, offset, in_port);
         }
       } else {
         message.body.in_port = in_port;
@@ -54,9 +51,6 @@
 
       while (pos < actionsEnd) {
         var unpack = action.unpack(buffer, pos);
-        if ('warnings' in unpack) {
-          warnings.concat(unpack.warnings);
-        }
         message.body.actions.push(unpack.action);
         pos = unpack.offset;
       }
@@ -70,35 +64,22 @@
 
       if (dataLen > 0) {
         if ('buffer_id' in message.body) {
-          warnings.push({
-            desc: util.format('%s message at offset %d has both buffer_id and data.', message.header.type, offset),
-            type: 'OFPET_BAD_REQUEST', "code" : 'OFPBRC_BUFFER_UNKNOWN'
-          });
+          console.warn('%s message at offset %d has both buffer_id and data.',
+                       message.header.type, offset);
         } else {
           message.body.data = new Buffer(dataLen);
           buffer.copy(message.body.data, 0, actionsEnd, actionsEnd + dataLen);
         }
       }
 
-      if (warnings.length == 0) {
-        return {
-          message: message,
-          offset: offset + len
-        }
-      } else {
-        return {
-          message: message,
-          warnings: warnings,
-          offset: offset + len
-        }
+      return {
+        message: message,
+        offset: offset + len
       }
     },
-
     pack: function(message, buffer, offset) {
       //TODO: Clear Buffer check?
       buffer.fill(0, 0 , buffer.length);
-
-      var warnings = [];
 
       if (buffer.length < offset + ofp.sizes.ofp_packet_out) {
           throw new Error(util.format('%s message at offset %d does not fit the buffer.',
@@ -123,11 +104,6 @@
       var pos = offset + offsets.actions;
       message.body.actions.forEach(function(act) {
         var pack = action.pack(act, buffer, pos);
-
-        if ('warnings' in pack) {
-          warnings.concat(pack.warnings);
-        }
-
         pos = pack.offset;
       });
 
@@ -141,18 +117,9 @@
 
       buffer.writeUInt16BE(pos, offset + offsetsHeader.length, true);
 
-      if (warnings.length == 0) {
-        return {
-          offset : pos
-        }
-      } else {
-        return {
-          warnings: warnings,
-          offset : pos
-        }
+      return {
+        offset : pos
       }
     }
-
   }
-
 })();

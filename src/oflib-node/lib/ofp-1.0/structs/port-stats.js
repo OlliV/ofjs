@@ -8,14 +8,13 @@
   const ofp = require('../ofp.js');
   const ofputil = require('../../util.js');
 
-  var offsets = ofp.offsets.ofp_port_stats;
+  const offsets = ofp.offsets.ofp_port_stats;
 
   module.exports = {
     struct: 'port-stats',
 
     unpack: function(buffer, offset) {
       var portStats = {};
-      var warnings = [];
 
       if (buffer.length < ofp.sizes.ofp_port_stats) {
         throw new Error(util.format('port-stats at offset %d has invalid length (%d).',
@@ -28,7 +27,8 @@
         if (portStats.port_no == ofp.ofp_port.OFPP_LOCAL) {
           portStats.port_no = 'OFPP_LOCAL';
         } else {
-          warnings.push({desc: util.format('port-stats at offset %d has invalid port_no (%d).', offset, portStats.port_no)});
+          console.warn('port-stats at offset %d has invalid port_no (%d).',
+                       offset, portStats.port_no);
         }
       }
 
@@ -93,21 +93,10 @@
         portStats.collisions = collisions;
       }
 
-      if (warnings.length == 0) {
-        return {
-          'port-stats': portStats,
-          offset: offset + ofp.sizes.ofp_port_stats
-        };
-
-      } else {
-        return {
-          'port-stats': portStats,
-          warnings: warnings,
-          offset: offset + ofp.sizes.ofp_port_stats
-        };
-      }
+      return {
+        'port-stats': portStats,
+        offset: offset + ofp.sizes.ofp_port_stats
+      };
     }
-
   }
-
 })();

@@ -8,17 +8,16 @@
   const util = require('util');
   const ofp = require('../../ofp.js');
 
-  var offsetsHeader = ofp.offsets.ofp_header;
-  var offsetsStats = ofp.offsets.ofp_stats_request;
-  var offsets = ofp.offsets.ofp_queue_stats_request;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsetsStats = ofp.offsets.ofp_stats_request;
+  const offsets = ofp.offsets.ofp_queue_stats_request;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
+    unpack: function(buffer, offset) {
       var stats = {
-        "header" : {"type" : 'OFPST_QUEUE'},
-        "body" : {}
+        header: {type: 'OFPST_QUEUE'},
+        body: {}
       };
-      var warnings = [];
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
@@ -31,10 +30,8 @@
       if (port > ofp.ofp_port.OFPP_MAX) {
         if (port != ofp.ofp_port.OFPP_ANY) {
           stats.body.port_no = port;
-          warnings.push({
-            "desc" : util.format('%s stats message at offset %d has invalid port (%d).', stats.header.type, offset, port),
-            "type" : 'OFPET_BAD_REQUEST', "code" : 'OFPBRC_BAD_STAT'
-          });
+          console.warn('%s stats message at offset %d has invalid port (%d).',
+                       stats.header.type, offset, port);
         }
       } else {
         stats.body.port_no = port;
@@ -45,20 +42,10 @@
         stats.body.queue_id = queue_id;
       }
 
-      if (warnings.length = 0) {
-        return {
-          "stats" : stats,
-          "offset" : offset + len
-        }
-      } else {
-        return {
-          "stats" : stats,
-          "warnings" : warnings,
-          "offset" : offset + len
-        }
+      return {
+        stats: stats,
+        offset: offset + len
       }
     }
-
   }
-
 })();

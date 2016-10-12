@@ -15,7 +15,6 @@
 
     unpack: function(buffer, offset) {
       var packetQueue = {};
-      var warnings = [];
 
       if (buffer.length < offset + ofp.sizes.ofp_packet_queue) {
         throw new Error(util.format('packet-queue at offset %d has invalid length (%d).',
@@ -31,7 +30,8 @@
 
       packetQueue.queue_id = buffer.readUInt32BE(offset, true);
       if (packetQueue.queue_id == ofp.OFPQ_ALL) {
-        warnings.push({desc: util.format('packet-queue at offset %d has invalid queue_id (%d).', offset, packetQueue.queue_id)});
+        console.warn('packet-queue at offset %d has invalid queue_id (%d).',
+                     offset, packetQueue.queue_id);
       }
 
       packetQueue.properties = [];
@@ -40,9 +40,6 @@
       while (pos < offset + len) {
         var prop = queueProp.unpack(buffer, pos);
 
-        if ('warnings' in prop) {
-          warnings.concat(prop.warnings);
-        }
         packetQueue.properties.push(prop['queue-prop']);
         pos = prop.offset;
       }
@@ -52,19 +49,10 @@
               offset, (pos - len)));
       }
 
-      if (warnings.length == 0) {
-        return {
-          'packet-queue': packetQueue,
-          offset: offset + len
-        }
-      } else {
-        return {
-          'packet-queue': packetQueue,
-          warnings: warnings,
-          offset: offset + len
-        }
+      return {
+        'packet-queue': packetQueue,
+        offset: offset + len
       }
     }
   }
-
 })();
