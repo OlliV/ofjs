@@ -46,10 +46,14 @@ export default class NodeFlowServer extends EventEmitter {
       console.log(`Connection from : ${sessionID}`);
 
       sock.on('data', (data) => {
+        try {
         const msgs = switchStream.process(data);
         msgs.forEach(function (msg) {
           self._processMessage(msg, sessionID);
         });
+        } catch (err) {
+          console.error(err);
+        }
       });
 
       sock.on('close', (data) => {
@@ -92,7 +96,7 @@ export default class NodeFlowServer extends EventEmitter {
       switch (type) {
         case 'OFPT_HELLO':
           this.sendPacket(sock, type,
-                             nfutils.setSyncmessage('OFPT_HELLO', obj));
+                          nfutils.setSyncmessage('OFPT_HELLO', obj));
           this.sendPacket(sock, type,
                           nfutils.setSyncmessage('OFPT_FEATURES_REQUEST', obj));
           break;
