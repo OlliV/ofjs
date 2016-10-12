@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "description": "OpenFlow Controller written in node.js",
   "author": "Olli Vanhoja <olli.vanhoja@cs.helsinki.fi>",
-  "main": "./src/index",
+  "main": "./lib/index",
   "scripts": {
-    "lint": "./node_modules/eslint/bin/eslint.js ---ext .js src",
-    "start": "node --stack-size=524288 src/index.js"
+    "lint": "./node_modules/eslint/bin/eslint.js ---ext .js lib",
+    "start": "node --stack-size=524288 lib/index.js"
   },
   "devDependencies": {
     "eslint": "2.10.2",
