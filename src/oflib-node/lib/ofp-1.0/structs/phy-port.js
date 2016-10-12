@@ -24,7 +24,7 @@
       port.port_no = buffer.readUInt16BE(offset + offsets.port_no, true);
 
       if (port.port_no > ofp.ofp_port.OFPP_MAX) {
-        if (port.port_no == ofp.ofp_port.OFPP_LOCAL) {
+        if (port.port_no === ofp.ofp_port.OFPP_LOCAL) {
           port.port_no = 'OFPP_LOCAL';
         } else {
           console.warn('port at offset %d has invalid port_no (%d).',
@@ -40,7 +40,7 @@
       var config = buffer.readUInt32BE(offset + offsets.config, true);
       var configParsed = ofputil.parseFlags(config, ofp.ofp_port_config);
       port.config = configParsed.array;
-      if (configParsed.remain != 0) {
+      if (configParsed.remain !== 0) {
         console.warn('port at offset %d has invalid config (%d).',
                      offset, config);
       }
@@ -48,46 +48,46 @@
       var state = buffer.readUInt32BE(offset + offsets.state, true);
       var stateParsed = ofputil.parseFlags(state, ofp.ofp_port_state);
       port.state = stateParsed.array;
-      if (stateParsed.remain != 0) {
+      if (stateParsed.remain !== 0) {
         console.warn('port at offset %d has invalid state (%d).',
                      offset, state);
       }
 
       var curr = buffer.readUInt32BE(offset + offsets.curr, true);
-      if (curr != 0) {
+      if (curr !== 0) {
         var currParsed = ofputil.parseFlags(curr, ofp.ofp_port_features);
         port.curr = currParsed.array;
-        if (currParsed.remain != 0) {
+        if (currParsed.remain !== 0) {
           console.warn('port at offset %d has invalid curr (%d).',
                        offset, curr);
         }
       }
 
       var advertised = buffer.readUInt32BE(offset + offsets.advertised, true);
-      if (advertised != 0) {
+      if (advertised !== 0) {
         var advertisedParsed = ofputil.parseFlags(advertised, ofp.ofp_port_features);
         port.advertised = advertisedParsed.array;
-        if (advertisedParsed.remain != 0) {
+        if (advertisedParsed.remain !== 0) {
           console.warn('port at offset %d has invalid advertised (%d).',
                        offset, advertised);
         }
       }
 
       var supported = buffer.readUInt32BE(offset + offsets.supported, true);
-      if (supported != 0) {
+      if (supported !== 0) {
         var supportedParsed = ofputil.parseFlags(supported, ofp.ofp_port_features);
         port.supported = supportedParsed.array;
-        if (supportedParsed.remain != 0) {
+        if (supportedParsed.remain !== 0) {
           console.warn('port at offset %d has invalid supported (%d).',
                        offset, supported);
         }
       }
 
       var peer = buffer.readUInt32BE(offset + offsets.peer, true);
-      if (peer != 0) {
+      if (peer !== 0) {
         var peerParsed = ofputil.parseFlags(peer, ofp.ofp_port_features);
         port.peer = peerParsed.array;
-        if (peerParsed.remain != 0) {
+        if (peerParsed.remain !== 0) {
           console.warn('port at offset %d has invalid peer (%d).',
                        offset, peer);
         }

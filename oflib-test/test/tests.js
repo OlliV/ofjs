@@ -129,7 +129,7 @@ function testPack(path, module) {
                 process.stderr.write(' ERROR.\n');
                 process.stderr.write(util.format("%j\n", pack.warnings));
             } else {
-                if (test.bin.length + offset != pack.offset) {
+                if (test.bin.length + offset !== pack.offset) {
                     process.stderr.write(' ERROR.\n');
                     process.stderr.write(util.format('Pack length differs (%d, %d).', test.bin.length, pack.offset));
                 } else {

@@ -11,7 +11,7 @@ module.exports = {
     }
 
     for (var i=0; i<length; i++) {
-      if (buf1[i] != buf2[i]) {
+      if (buf1[i] !== buf2[i]) {
         throw new Error(util.format('Buffers differ at %d (%d, %d),  (%s, %s).',
                                     i, buf1[i], buf2[i],
                                     buf1.toString('hex', 0, length),
@@ -28,13 +28,13 @@ module.exports = {
 
     function objEquals(obj1, obj2, path) {
       if (Buffer.isBuffer(obj1) && Buffer.isBuffer(obj2)) {
-        if (obj1.length != obj2.length) {
+        if (obj1.length !== obj2.length) {
           throw new Error(util.format("Buffers at \"%s\" differ (%s, %s).",
                                       path, obj1.toString('hex'),
                                       obj2.toString('hex')));
         }
         for (var i=0; i<obj1.length; i++) {
-          if (obj1[i] != obj2[i]) {
+          if (obj1[i] !== obj2[i]) {
             throw new Error(util.format("Buffers at \"%s\" differ (%d, %d), (%s, %s).",
                                         path, obj1[i], obj2[i],
                                         obj1.toString('hex'),
@@ -45,9 +45,9 @@ module.exports = {
         return {"equals" : true};
       }
 
-      if (typeof obj1 != 'object' ||
-          typeof obj2 != 'object') {
-        if (obj1 != obj2) {
+      if (typeof obj1 !== 'object' ||
+          typeof obj2 !== 'object') {
+        if (obj1 !== obj2) {
           throw new Error(util.format("Value at \"%s\" is different (%s, %s).",
                                       path, obj1, obj2));
         } else {
@@ -58,7 +58,7 @@ module.exports = {
       var keys1 = Object.keys(obj1).sort();
       var keys2 = Object.keys(obj2).sort();
 
-      if (keys1.length != keys2.length) {
+      if (keys1.length !== keys2.length) {
         throw new Error(util.format("Objects at \"%s\" have different number of properties (%j, %j).",
                                     path, keys1, keys2));
       }
@@ -67,7 +67,7 @@ module.exports = {
         var key1 = keys1[i];
         var key2 = keys2[i];
 
-        if (key1 != key2) {
+        if (key1 !== key2) {
           throw new Error(util.format("Objects at \"%s\" have different set of properties (%j, %j).",
                                       path, keys1, keys2));
         }
@@ -79,11 +79,11 @@ module.exports = {
             Object.prototype.toString.apply(val2) === '[object Array]') {
           var eq = arrEquals(val1, val2, path + '.' + key1);
 
-        } else if (typeof val1 == 'object' &&
-            typeof val2 == 'object') {
+        } else if (typeof val1 === 'object' &&
+            typeof val2 === 'object') {
           var eq = objEquals(val1, val2, path + '.' + key1);
         } else {
-          if (val1 != val2) {
+          if (val1 !== val2) {
             throw new Error(util.format("Values at \"%s.%s\" differ (%j, %j).",
                                         path, key1, val1, val2));
           }
@@ -94,7 +94,7 @@ module.exports = {
     }
 
     function arrEquals(arr1, arr2, path) {
-      if (arr1.length != arr2.length) {
+      if (arr1.length !== arr2.length) {
         throw new Error(util.format("Arrays at \"%s\" have different lengths (%j, %j).",
                                     path, arr1, arr2));
       }

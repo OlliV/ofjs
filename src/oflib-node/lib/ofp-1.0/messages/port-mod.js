@@ -22,7 +22,7 @@
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
-      if (len != ofp.sizes.ofp_port_mod) {
+      if (len !== ofp.sizes.ofp_port_mod) {
         throw new Error(util.format('%s message at offset %d has invalid length (%d).',
                                     message.header.type, offset, len));
       }
@@ -39,14 +39,14 @@
       var mask = buffer.readUInt32BE(offset + offsets.mask, true);
 
       var configSetParsed = ofputil.parseFlags((config & mask), ofp.ofp_port_config);
-      if (configSetParsed.remain != 0) {
+      if (configSetParsed.remain !== 0) {
         console.error('%s message at offset %d has invalid config (%d).',
                       message.header.type, offset, config);
       }
       message.body.config_set = configSetParsed.array;
 
       var configUnsetParsed = ofputil.parseFlags((~config & mask), ofp.ofp_port_config);
-      if (configUnsetParsed.remain != 0) {
+      if (configUnsetParsed.remain !== 0) {
         console.error('%s message at offset %d has invalid config (%d).',
                       message.header.type, offset, config);
       }
@@ -54,7 +54,7 @@
 
       var advertise = buffer.readUInt32BE(offset + offsets.advertise, true);
       var advertiseParsed = ofputil.parseFlags(advertise, ofp.ofp_port_features);
-      if (advertiseParsed.remain != 0) {
+      if (advertiseParsed.remain !== 0) {
         console.error('%s message at offset %d has invalid advertise (%d).',
                       message.header.type, offset, advertise);
       }

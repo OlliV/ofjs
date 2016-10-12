@@ -49,7 +49,7 @@
 
 
       var flags = buffer.readUInt16BE(offset + offsets.flags, true);
-      if (flags != 0) {
+      if (flags !== 0) {
         console.warn('%s message at offset %d has invalid flags (%d).',
                      message.header.type, offset, flags);
       }

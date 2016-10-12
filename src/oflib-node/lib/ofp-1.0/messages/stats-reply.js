@@ -21,7 +21,7 @@
   const offsets = ofp.offsets.ofp_stats_reply;
 
   module.exports = {
-    unpack : function(buffer, offset) {
+    unpack : function (buffer, offset) {
       let message = {
         header: {type: 'OFPT_STATS_REPLY'}
       };
@@ -52,7 +52,7 @@
 
       var flags = buffer.readUInt16BE(offset + offsets.flags, true);
       var flagsParsed = ofputil.parseFlags(flags, ofp.ofp_stats_reply_flags);
-      if (flagsParsed.remain != 0) {
+      if (flagsParsed.remain !== 0) {
         message.body.header.flags = flags;
         console.warn('%s message at offset %d has invalid flags (%d).',
                      message.header.type, offset, flags);

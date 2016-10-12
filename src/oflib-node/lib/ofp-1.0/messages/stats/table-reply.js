@@ -35,7 +35,7 @@
         pos = unpack.offset;
       }
 
-      if (pos != offset + len) {
+      if (pos !== offset + len) {
         throw new Error(util.format('%s stats message at offset %d has extra bytes (%d).',
                                     stats.header.type, offset, (pos - len)));
       }

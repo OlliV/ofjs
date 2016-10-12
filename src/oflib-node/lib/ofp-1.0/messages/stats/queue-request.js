@@ -21,14 +21,14 @@
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
-      if (len != ofp.sizes.ofp_stats_request + ofp.sizes.ofp_queue_stats_request) {
+      if (len !== ofp.sizes.ofp_stats_request + ofp.sizes.ofp_queue_stats_request) {
         throw new Error(util.format('%s stats message at offset %d has invalid length (%d).',
                                     stats.header.type, offset, len));
       }
 
       var port = buffer.readUInt16BE(offset + ofp.sizes.ofp_stats_request + offsets.port_no, true);
       if (port > ofp.ofp_port.OFPP_MAX) {
-        if (port != ofp.ofp_port.OFPP_ANY) {
+        if (port !== ofp.ofp_port.OFPP_ANY) {
           stats.body.port_no = port;
           console.warn('%s stats message at offset %d has invalid port (%d).',
                        stats.header.type, offset, port);
@@ -38,7 +38,7 @@
       }
 
       var queue_id = buffer.readUInt32BE(offset + ofp.sizes.ofp_stats_request + offsets.queue_id, true);
-      if (queue_id != ofp.OFPQ_ALL) {
+      if (queue_id !== ofp.OFPQ_ALL) {
         stats.body.queue_id = queue_id;
       }
 

@@ -32,7 +32,7 @@
 
       var in_port = buffer.readUInt16BE(offset + offsets.in_port, true);
       if (in_port > ofp.ofp_port.OFPP_MAX) {
-        if (in_port == ofp.ofp_port.OFPP_LOCAL) {
+        if (in_port === ofp.ofp_port.OFPP_LOCAL) {
           message.body.in_port = 'OFPP_LOCAL';
         } else {
           message.body.in_port = in_port;

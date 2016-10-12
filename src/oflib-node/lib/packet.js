@@ -47,21 +47,21 @@ module.exports = {
   IP_DSCP_MAX  : 0x3f,
 
   isEthNone : function(buf, offset) {
-    if (buf[offset + 0] != 0x00) return false; if (buf[offset + 1] != 0x00) return false;
-    if (buf[offset + 2] != 0x00) return false; if (buf[offset + 3] != 0x00) return false;
-    if (buf[offset + 4] != 0x00) return false; if (buf[offset + 5] != 0x00) return false;
+    if (buf[offset + 0] !== 0x00) return false; if (buf[offset + 1] !== 0x00) return false;
+    if (buf[offset + 2] !== 0x00) return false; if (buf[offset + 3] !== 0x00) return false;
+    if (buf[offset + 4] !== 0x00) return false; if (buf[offset + 5] !== 0x00) return false;
     return true;
   },
 
   isEthAll : function(buf, offset) {
-    if (buf[offset + 0] != 0xff) return false; if (buf[offset + 1] != 0xff) return false;
-    if (buf[offset + 2] != 0xff) return false; if (buf[offset + 3] != 0xff) return false;
-    if (buf[offset + 4] != 0xff) return false; if (buf[offset + 5] != 0xff) return false;
+    if (buf[offset + 0] !== 0xff) return false; if (buf[offset + 1] !== 0xff) return false;
+    if (buf[offset + 2] !== 0xff) return false; if (buf[offset + 3] !== 0xff) return false;
+    if (buf[offset + 4] !== 0xff) return false; if (buf[offset + 5] !== 0xff) return false;
     return true;
   },
 
-  isIPv4None : function(buf, offset) { return buf.readUInt32BE(offset, true) == 0x00000000; },
-  isIPv4All : function(buf, offset) { return buf.readUInt32BE(offset, true) == 0xffffffff; },
+  isIPv4None : function(buf, offset) { return buf.readUInt32BE(offset, true) === 0x00000000; },
+  isIPv4All : function(buf, offset) { return buf.readUInt32BE(offset, true) === 0xffffffff; },
 
   ethToString : function ethToString(buffer, offset) {
     return buffer.toString('hex', offset    , offset + 1) + ':' +

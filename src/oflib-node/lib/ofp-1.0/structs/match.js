@@ -22,10 +22,10 @@
 
       var wildcards = buffer.readUInt32BE(offset + offsets.wildcards, true);
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_IN_PORT) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_IN_PORT) === 0) {
         var in_port = buffer.readUInt16BE(offset + offsets.in_port, true);
         if (in_port > ofp.ofp_port.OFPP_MAX) {
-          if (in_port == ofp.ofp_port.OFPP_LOCAL) {
+          if (in_port === ofp.ofp_port.OFPP_LOCAL) {
             match.in_port = 'OFPP_LOCAL';
           } else {
             match.in_port = in_port;
@@ -36,17 +36,17 @@
         }
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_SRC) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_SRC) === 0) {
         match.dl_src = packet.ethToString(buffer, offset + offsets.dl_src);
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_DST) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_DST) === 0) {
         match.dl_dst = packet.ethToString(buffer, offset + offsets.dl_dst);
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_VLAN) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_VLAN) === 0) {
         var dl_vlan = buffer.readUInt16BE(offset + offsets.dl_vlan, true);
-        if (dl_vlan == ofp.OFP_VLAN_NONE) {
+        if (dl_vlan === ofp.OFP_VLAN_NONE) {
           match.dl_vlan = 'OFP_VLAN_NONE';
         } else {
           match.dl_vlan = dl_vlan;
@@ -54,21 +54,21 @@
         // TODO: validate
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_VLAN_PCP) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_VLAN_PCP) === 0) {
         match.dl_vlan_pcp = buffer.readUInt8(offset + offsets.dl_vlan_pcp, true);
         // TODO: validate
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_TYPE) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_DL_TYPE) === 0) {
         match.dl_type = buffer.readUInt16BE(offset + offsets.dl_type, true);
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_NW_TOS) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_NW_TOS) === 0) {
         match.nw_tos = buffer.readUInt8(offset + offsets.nw_tos, true);
         // TODO: validate
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_NW_PROTO) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_NW_PROTO) === 0) {
         match.nw_proto = buffer.readUInt8(offset + offsets.nw_proto, true);
       }
 
@@ -88,11 +88,11 @@
         match.nw_dst = packet.ipv4ToString(buffer, offset + offsets.nw_dst, offset + offsets.nw_dst + 4);
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_TP_SRC) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_TP_SRC) === 0) {
         match.tp_src = buffer.readUInt16BE(offset, true);
       }
 
-      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_TP_DST) == 0) {
+      if ((wildcards & ofp.ofp_flow_wildcards.OFPFW_TP_DST) === 0) {
         match.tp_dst = buffer.readUInt16BE(offset, true);
       }
 
@@ -115,7 +115,7 @@
       // TODO validate
       let in_port;
       if ('in_port' in match.body) {
-        if (match.body.in_port == 'OFPP_LOCAL') {
+        if (match.body.in_port === 'OFPP_LOCAL') {
           in_port = ofp.ofp_port_no.OFPP_LOCAL;
         } else {
           in_port = match.body.in_port;
@@ -142,7 +142,7 @@
 
       let dl_vlan;
       if ('dl_vlan' in match.body) {
-        if (match.body.dl_vlan == 'OFP_VLAN_NONE') {
+        if (match.body.dl_vlan === 'OFP_VLAN_NONE') {
           dl_vlan = ofp.OFP_VLAN_NONE;
         } else {
           dl_vlan = match.body.dl_vlan;

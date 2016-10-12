@@ -31,7 +31,7 @@
 
       var in_port = buffer.readUInt16BE(offset + offsets.in_port, true);
       if (in_port > ofp.ofp_port.OFPP_MAX) {
-        if (in_port == ofp.ofp_port.OFPP_CONTROLLER) {
+        if (in_port === ofp.ofp_port.OFPP_CONTROLLER) {
           message.body.in_port = 'OFPP_CONTROLLER';
         } else {
           message.body.in_port = in_port;
@@ -55,7 +55,7 @@
         pos = unpack.offset;
       }
 
-      if (pos != actionsEnd) {
+      if (pos !== actionsEnd) {
         throw new Error(util.format('%s message at offset %d has extra bytes (%d).',
                                     message.header.type, offset, (pos - len)));
       }

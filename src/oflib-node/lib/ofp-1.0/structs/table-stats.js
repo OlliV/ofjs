@@ -32,7 +32,7 @@
       var wildcards = buffer.readUInt32BE(offset + offsets.wildcards, true);
       var wildcardsParsed = ofputil.parseFlags(wildcards, ofp.ofp_flow_wildcards);
       tableStats.wildcards = wildcardsParsed.array;
-      if (wildcardsParsed.remain != 0) {
+      if (wildcardsParsed.remain !== 0) {
         console.warn('table-stats at offset %d has invalid wildcards (%d).',
                      offset, wildcards);
       }

@@ -24,7 +24,7 @@
       portStats.port_no = buffer.readUInt16BE(offset + offsets.port_no, true);
 
       if (portStats.port_no > ofp.ofp_port.OFPP_MAX) {
-        if (portStats.port_no == ofp.ofp_port.OFPP_LOCAL) {
+        if (portStats.port_no === ofp.ofp_port.OFPP_LOCAL) {
           portStats.port_no = 'OFPP_LOCAL';
         } else {
           console.warn('port-stats at offset %d has invalid port_no (%d).',

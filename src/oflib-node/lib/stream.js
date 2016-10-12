@@ -2,11 +2,10 @@
  * Author: Zoltán Lajos Kis <zoltan.lajos.kis@ericsson.com>
  */
 
-import util from 'util';
 import ofp from './ofp.js';
 import oflib from './oflib.js';
 
-const Stream = function Stream() {
+const Stream = function Stream () {
   this.length = 1024;
   this.buffer = new Buffer(1024);
   this.size = 0;
@@ -19,10 +18,10 @@ module.exports = Stream;
  * Returns: [<result>], where result is either:
  * {"message" : <JSON>}
  */
-Stream.prototype.process =  function process(data, offset) {
+Stream.prototype.process = function process (data, offset) {
   if (!offset) { offset = 0; }
 
-  if (this.size == 0) {
+  if (this.size === 0) {
     /* nothing is buffered yet */
 
     if (data.length - offset < ofp.sizes.ofp_header) {
@@ -41,7 +40,7 @@ Stream.prototype.process =  function process(data, offset) {
       return [];
     }
 
-    if (data.length - offset == msgSize) {
+    if (data.length - offset === msgSize) {
       return [oflib.unpack(data, offset)];
     }
 
@@ -80,7 +79,7 @@ Stream.prototype.process =  function process(data, offset) {
       return [];
     }
 
-    if (this.size == msgSize) {
+    if (this.size === msgSize) {
       this.size = 0;
       return [oflib.unpack(this.buffer, 0)];
     }
@@ -95,7 +94,6 @@ Stream.prototype.process =  function process(data, offset) {
     var moreResult = this.process(this.EMPTY_BUFFER, 0);
     return result.concat(moreResult);
   }
-}
-
+};
 
 Stream.prototype.EMPTY_BUFFER = new Buffer(0);

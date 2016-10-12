@@ -22,7 +22,7 @@
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
-      if (len != ofp.sizes.ofp_port_status) {
+      if (len !== ofp.sizes.ofp_port_status) {
         throw new Error(util.format('%s message at offset %d has invalid length (%d).',
                         message.header.type, offset, len));
       }

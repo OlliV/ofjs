@@ -23,7 +23,7 @@
       queueStats.port_no = buffer.readUInt16BE(offset + offsets.port_no, true);
 
       if (queueStats.port_no > ofp.ofp_port.OFPP_MAX) {
-        if (queueStats.port_no == ofp.ofp_port.OFPP_LOCAL) {
+        if (queueStats.port_no === ofp.ofp_port.OFPP_LOCAL) {
           queueStats.port_no = 'OFPP_LOCAL';
         } else {
           console.warn('queue-stats at offset %d has invalid port_no (%d).',

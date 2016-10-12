@@ -71,7 +71,7 @@
         pos = act.offset;
       }
 
-      if (pos != offset + len) {
+      if (pos !== offset + len) {
         throw new Error(util.format('flow-stats at offset %d has extra bytes (%d).',
                         offset, (pos - len)));
       }

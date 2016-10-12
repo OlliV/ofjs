@@ -10,20 +10,20 @@
   const ofputil = require('../../../util.js');
   const match = require('../../structs/match.js');
 
-  var offsetsHeader = ofp.offsets.ofp_header;
-  var offsetsStats = ofp.offsets.ofp_stats_reply;
-  var offsets = ofp.offsets.ofp_desc_stats;
+  const offsetsHeader = ofp.offsets.ofp_header;
+  const offsetsStats = ofp.offsets.ofp_stats_reply;
+  const offsets = ofp.offsets.ofp_desc_stats;
 
   module.exports = {
-    "unpack" : function(buffer, offset) {
+    unpack: function (buffer, offset) {
       var stats = {
-        "header" : {"type" : 'OFPST_DESC'},
-        "body" : {}
+        header: {type: 'OFPST_DESC'},
+        body: {}
       };
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
 
-      if (len != ofp.sizes.ofp_stats_reply + ofp.sizes.ofp_desc_stats) {
+      if (len !== ofp.sizes.ofp_stats_reply + ofp.sizes.ofp_desc_stats) {
         throw new Error(util.format('%s stats message at offset %d has invalid length (%d).',
                                     stats.header.type, offset, len));
       }
@@ -44,13 +44,11 @@
       stats.body.dp_desc = stats.body.dp_desc.substr(0, stats.body.dp_desc.indexOf('\0'));
 
       return {
-        "stats" : stats,
-        "offset" : offset + len
+        stats: stats,
+        offset: offset + len
       }
     }
-
   }
-
 })();
 
 

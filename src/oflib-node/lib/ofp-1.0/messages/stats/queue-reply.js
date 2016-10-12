@@ -12,10 +12,10 @@
   const offsetsHeader = ofp.offsets.ofp_header;
 
   module.exports = {
-    unpack: function(buffer, offset) {
+    unpack: function (buffer, offset) {
       var stats = {
-        "header" : {"type" : 'OFPST_QUEUE'},
-        "body" : {}
+        header: {type: 'OFPST_QUEUE'},
+        body: {}
       };
 
       var len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
@@ -35,7 +35,7 @@
         pos = unpack.offset;
       }
 
-      if (pos != offset + len) {
+      if (pos !== offset + len) {
         throw new Error(util.format('%s stats message at offset %d has extra bytes (%d).',
                                     stats.header.type, offset, (pos - len)));
       }

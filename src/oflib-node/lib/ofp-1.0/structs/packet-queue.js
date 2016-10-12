@@ -29,7 +29,7 @@
       }
 
       packetQueue.queue_id = buffer.readUInt32BE(offset, true);
-      if (packetQueue.queue_id == ofp.OFPQ_ALL) {
+      if (packetQueue.queue_id === ofp.OFPQ_ALL) {
         console.warn('packet-queue at offset %d has invalid queue_id (%d).',
                      offset, packetQueue.queue_id);
       }
@@ -44,7 +44,7 @@
         pos = prop.offset;
       }
 
-      if (pos != offset + len) {
+      if (pos !== offset + len) {
         throw new Error(util.format('queue-prop at offset %d has extra bytes (%d).',
               offset, (pos - len)));
       }

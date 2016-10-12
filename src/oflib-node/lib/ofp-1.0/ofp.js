@@ -872,7 +872,7 @@ module.exports = {
 /* create reverse mapping */
 (function() {
   let mapKeys = Object.keys(module.exports).filter(function(k) {
-    return ((k.indexOf('ofp_') == 0) && (typeof module.exports[k] == 'object'))
+    return ((k.indexOf('ofp_') === 0) && (typeof module.exports[k] === 'object'))
   });
 
   for (let i = 0; i < mapKeys.length; i++) {

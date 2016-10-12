@@ -15,7 +15,7 @@
       };
 
       let len = buffer.readUInt16BE(offset + offsetsHeader.length, true);
-      if (len != ofp.sizes.ofp_stats_request) {
+      if (len !== ofp.sizes.ofp_stats_request) {
         throw new Error(util.format('%s stats message at offset %d has invalid length (%d).',
                                     stats.header.type, offset, len));
       }

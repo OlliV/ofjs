@@ -16,7 +16,7 @@
       };
 
       var len = buffer.readUInt16BE(offset + offsets.len, true);
-      if (len != ofp.sizes.ofp_queue_prop_header) {
+      if (len !== ofp.sizes.ofp_queue_prop_header) {
         throw new Error(util.format('%s queue-prop at offset %d has invalid length (%d).', queueProp.header.property, offset, len));
       }
 
