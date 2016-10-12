@@ -1,4 +1,4 @@
-export default class L2Table {
+module.exports = class L2Table {
   constructor () {
     this.table = new Map();
   }

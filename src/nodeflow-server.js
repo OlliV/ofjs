@@ -5,20 +5,19 @@
 // Copyright 2011-2012 (C) Cisco Systems, Inc.
 // Author : Gary Berger, Cisco Systems, inc.
 
-import EventEmitter from 'events';
-import net from 'net';
-import oflib from './oflib-node';
-import ofpp from './oflib-node/lib/ofp-1.0/ofp.js';
-import decode from './decoder.js';
-import * as nfutils from './nf-utils.js';
-import L2Table from './l2table.js';
-import * as l2 from './l2forwarding.js';
+const EventEmitter = require('events');
+const net = require('net');
+const oflib = require('./oflib-node');
+const ofpp = require('./oflib-node/lib/ofp-1.0/ofp.js');
+const decode = require('./decoder.js');
+const nfutils = require('./nf-utils.js');
+const L2Table = require('./l2table.js');
+const l2 = require('./l2forwarding.js');
 
 const debug = process.env.DEBUG;
-
 const switchStream = new oflib.Stream();
 
-export default class NodeFlowServer extends EventEmitter {
+module.exports = class NodeFlowServer extends EventEmitter {
   constructor () {
     super();
     this.sessions = new Map();

@@ -4,9 +4,11 @@
 // Copyright 2016 (C) Olli Vanhoja
 // Copyright 2011-2012 (C) Cisco Systems, Inc.
 // Author : Gary Berger, Cisco Systems, inc.
-import oflib from './oflib-node';
 
-export function setSyncmessage (type, obj) {
+const oflib = require('./oflib-node');
+
+exports.setSyncmessage = setSyncmessage;
+function setSyncmessage (type, obj) {
   return {
     message: {
       header: {
@@ -20,7 +22,8 @@ export function setSyncmessage (type, obj) {
   };
 }
 
-export function fillBuffer (obj, buffer) {
+exports.fillBuffer = fillBuffer;
+function fillBuffer (obj, buffer) {
   try {
     oflib.pack(obj, buffer, 0);
   } catch (error) {
@@ -28,7 +31,8 @@ export function fillBuffer (obj, buffer) {
   }
 }
 
-export function setOutFloodPacket (obj, inPort) {
+exports.setOutFloodPacket = setOutFloodPacket;
+function setOutFloodPacket (obj, inPort) {
   const bufId = obj.message.body.buffer_id || 0xffffffff;
   let msg = {
     message: {
@@ -61,7 +65,8 @@ export function setOutFloodPacket (obj, inPort) {
   return msg;
 }
 
-export function extractFlow (packet) {
+exports.extractFlow = extractFlow;
+function extractFlow (packet) {
   let flow = {
     dl_src: packet.shost,
     dl_dst: packet.dhost,
@@ -105,7 +110,8 @@ export function extractFlow (packet) {
   return flow;
 }
 
-export function setFlowModPacket (obj, packet, inPort, outPort) {
+exports.setFlowModPacket = setFlowModPacket;
+function setFlowModPacket (obj, packet, inPort, outPort) {
   let flow = extractFlow(packet);
 
   flow.in_port = inPort;

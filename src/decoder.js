@@ -1,9 +1,9 @@
 // Borrowed this from node-pcap
 // tks to the author. 2010 Matthew Ranney
 
-import dns from 'dns';
-import events from 'events';
-import util from 'util';
+const dns = require('dns');
+const events = require('events');
+const util = require('util');
 
 const HTTPParser = process.binding('http_parser').HTTPParser;
 

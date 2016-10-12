@@ -2,8 +2,8 @@
  * Author: Zoltán Lajos Kis <zoltan.lajos.kis@ericsson.com>
  */
 
-import ofp from './ofp.js';
-import msg10 from './ofp-1.0/message.js';
+const ofp = require('./ofp.js');
+const msg10 = require('./ofp-1.0/message.js');
 
 module.exports = {
   struct: 'message',

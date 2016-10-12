@@ -1,9 +1,10 @@
-import * as nfutils from './nf-utils.js';
-import mac from 'mac-address';
+const nfutils = require('./nf-utils.js');
+const mac = require('mac-address');
 
 const debug = process.env.DEBUG;
 
-export function doL2Learning (l2Table, obj, packet) {
+exports.doL2Learning = doL2Learning;
+function doL2Learning (l2Table, obj, packet) {
   const dlSrc = packet.shost;
   const inPort = obj.message.body.in_port;
 
@@ -26,7 +27,8 @@ export function doL2Learning (l2Table, obj, packet) {
   }
 }
 
-export function forwardL2Packet (server, l2Table, obj, packet) {
+exports.forwardL2Packet = forwardL2Packet;
+function forwardL2Packet (server, l2Table, obj, packet) {
   const dlDst = packet.dhost;
   const dlSrc = packet.shost;
   const inPort = l2Table.getPort(dlSrc);

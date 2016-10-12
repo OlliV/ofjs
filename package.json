@@ -3,25 +3,12 @@
   "version": "0.1.0",
   "description": "OpenFlow Controller written in node.js",
   "author": "Olli Vanhoja <olli.vanhoja@cs.helsinki.fi>",
-  "main": "./build/index",
-  "files": [
-    "build"
-  ],
+  "main": "./src/index",
   "scripts": {
-    "build": "babel src --out-dir build/",
     "lint": "./node_modules/eslint/bin/eslint.js ---ext .js src",
-    "start": "node --stack-size=524288 build/index.js"
-  },
-  "babel": {
-    "plugins": [
-      "transform-es2015-modules-commonjs",
-      "transform-async-to-generator"
-    ]
+    "start": "node --stack-size=524288 src/index.js"
   },
   "devDependencies": {
-    "babel-plugin-transform-es2015-modules-commonjs": "6.8.0",
-    "babel-plugin-transform-async-to-generator": "6.8.0",
-    "babel-cli": "6.8.0",
     "eslint": "2.10.2",
     "babel-eslint": "6.0.4",
     "eslint-config-standard": "5.3.1",
@@ -32,7 +19,6 @@
   },
   "eslintConfig": {
     "extends": "standard",
-    "parser": "babel-eslint",
     "rules": {
       "comma-dangle": "always-multiline",
       "yoda": 0,
@@ -45,6 +31,7 @@
     }
   },
   "dependencies": {
+    "async-to-gen": "^1.1.4",
     "mac-address": "0.3.0",
     "promise-redis": "0.0.5",
     "segfault-handler": "1.0.0"

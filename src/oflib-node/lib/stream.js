@@ -2,8 +2,8 @@
  * Author: Zoltán Lajos Kis <zoltan.lajos.kis@ericsson.com>
  */
 
-import ofp from './ofp.js';
-import oflib from './oflib.js';
+const ofp = require('./ofp.js');
+const oflib = require('./oflib.js');
 
 const Stream = function Stream () {
   this.length = 1024;
