@@ -6,7 +6,7 @@
   "main": "./lib/index",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ---ext .js lib",
-    "start": "node --stack-size=524288 lib/index.js"
+    "start": "node --use_strict --stack-size=524288 lib/index.js"
   },
   "devDependencies": {
     "eslint": "3.7.1",
