@@ -21,19 +21,43 @@
       "promise"
     ],
     "rules": {
-      "comma-dangle": [1, "always-multiline"],
-      "key-spacing": ["error", { "mode": "minimum" }],
+      "comma-dangle": [
+        1,
+        "always-multiline"
+      ],
+      "key-spacing": [
+        "error",
+        {
+          "mode": "minimum"
+        }
+      ],
       "no-extra-semi": 2,
-      "no-shadow": [2, {"builtinGlobals": true, "hoist": "functions"}],
+      "no-shadow": [
+        2,
+        {
+          "builtinGlobals": true,
+          "hoist": "functions"
+        }
+      ],
       "no-unused-vars": 2,
-      "semi": [ 2, "always" ],
-      "semi-spacing": [2, { "before": false, "after": true }],
+      "semi": [
+        2,
+        "always"
+      ],
+      "semi-spacing": [
+        2,
+        {
+          "before": false,
+          "after": true
+        }
+      ],
       "yoda": 0
     }
   },
   "dependencies": {
     "async-to-gen": "1.1.4",
     "mac-address": "0.3.0",
+    "node-core-module-names": "1.1.0",
     "promise-redis": "0.0.5",
     "segfault-handler": "1.0.0"
   }
