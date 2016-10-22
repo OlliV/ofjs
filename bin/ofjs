@@ -5,6 +5,7 @@ const ipc = require('node-ipc');
 
 ipc.config.id = 'ofjs';
 ipc.config.retry = 1500;
+ipc.config.silent = true;
 
 let validArg;
 
@@ -14,7 +15,6 @@ program.command('insmod [name]')
   validArg = true;
 
   ipc.of.ofjs.emit('message', {cmd: 'load', module: name});
-  
 });
 
 program.command('delmod [name]', 'unload module')
@@ -32,7 +32,7 @@ ipc.connectTo('ofjs', () => {
     ipc.log('disconnected from world'.notice);
   });
 
-  ipc.of.ofjs.on('message', (data) => {
+  ipc.of.ofjs.on('reply', (data) => {
     console.log(data);
     ipc.disconnect('ofjs');
   });
