@@ -5,8 +5,8 @@
   "author": "Olli Vanhoja <olli.vanhoja@cs.helsinki.fi>",
   "main": "./lib/index",
   "scripts": {
-    "build": "mkdir -p build/lib && mkdir -p build/ofjs_modules && cp -R bin build/ && async-to-gen -d build/lib/ lib/ && async-to-gen -d build/ofjs_modules/ ofjs_modules/",
-    "lint": "./node_modules/eslint/bin/eslint.js ---ext .js lib",
+    "build": "./build.sh",
+    "lint": "./node_modules/.bin/eslint ---ext .js .",
     "start": "node --use_strict --stack-size=524288 build/lib/index.js"
   },
   "bin": {

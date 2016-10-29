@@ -1,12 +1,12 @@
 const SegfaultHandler = require('segfault-handler');
-const NodeFlowServer = require('./nodeflow-server.js');
+const FlowServer = require('../lib/flow-server.js').default;
 const ConfServer = require('./conf-server.js');
 // Must be the last module loaded
 const mod = require('./modules.js');
 
 SegfaultHandler.registerHandler('crash.log');
 
-const nfs = new NodeFlowServer();
+const server = new FlowServer();
 const confServer = new ConfServer({ mod });
 
 process.on('SIGINT', () => {
@@ -15,8 +15,10 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
+mod.loadModule('../ofjs_modules/default.js');
+
 Promise.all([
-  nfs.start('0.0.0.0', '6633'),
+  server.start('0.0.0.0', '6633'),
   confServer.start('/tmp/app.ofjs'),
 ])
 .then(() => console.log('ofjs ready'))
